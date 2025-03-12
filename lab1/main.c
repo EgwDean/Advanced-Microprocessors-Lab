@@ -2,7 +2,7 @@
  * lab1.c
  *
  * Created: 21/02/2025 15:44:32
- * Author : Theo
+ * Author : Theo & Dean
  */ 
 
 #include <avr/io.h>
@@ -21,7 +21,7 @@ int main() {
 	
 	// Main loop
 	while (1) {
-		PORTD.OUT |= 0b00000000; // Idle command to allow breakpoints in the loop (insert breakpoint)
+		PORTD.OUT |= 0b00000000; // Idle command to allow breakpoints in the loop
 	}
 
 	cli(); // Disable interrupts
@@ -29,16 +29,16 @@ int main() {
 
 // Interrupt Service Routine for port F
 ISR(PORTF_PORT_vect) {
-	uint8_t button_up = PORTF.INTFLAGS & PIN5_bm; // Equals PIN5_bm if pin 5 is pressed, else it's all 0s
-	uint8_t button_down = PORTF.INTFLAGS & PIN6_bm; // Equals PIN6_bm if pin 6 is pressed, else it's all 0s
+	uint8_t go_up = PORTF.INTFLAGS & PIN5_bm; // Equals PIN5_bm if pin 5 is pressed, else it's all 0s
+	uint8_t go_down = PORTF.INTFLAGS & PIN6_bm; // Equals PIN6_bm if pin 6 is pressed, else it's all 0s
 	// If both switches are used, both the variables are all 0s
 	
 	int floor; // Integer indicating the current floor
 	
-	if (button_up && button_down) { // Error, both switches used
-		PORTD.OUT &= 0b11111110; // First LED of port D gets turned on (insert breakpoint)
+	if (go_up && go_down) { // Error, both switches used
+		PORTD.OUT &= 0b11111110; // First LED of port D gets turned on 
 		_delay_ms(10); // Wait for 10ms
-		PORTD.OUT |= 0b00000001; // First LED of port D gets turned off (insert breakpoint)
+		PORTD.OUT |= 0b00000001; // First LED of port D gets turned off 
 	}
 
 	else { // One of the switches used
@@ -48,24 +48,28 @@ ISR(PORTF_PORT_vect) {
 			floor = 1;
 		if ((PORTD.OUT & 0b00000111) == 0b00000001) // Current level is 2
 			floor = 2;	
-		if (button_up) { // Move up switch used
+			
+		if (go_up) { // Move up switch used
+			
 			if (floor == 0) // Go to level 1
-				PORTD.OUT = 0b00000101;	
+				PORTD.OUT &= 0b11111101;	
 			if (floor == 1) // Go to level 2
-				PORTD.OUT = 0b00000001;	
+				PORTD.OUT &= 0b11111001;	
 			if (floor == 2) // Stay at level 2
-				PORTD.OUT = 0b00000001;	
+				PORTD.OUT &= 0b11111111; // Do nothing
 		}
 	
-		if (button_down) { // Move down switch used
+		if (go_down) { // Move down switch used
+			
 			if (floor == 0) // Stay at ground level
-				PORTD.OUT = 0b00000111;	
+				PORTD.OUT |= 0b00000000; // Do nothing	
 			if (floor == 1) // Go to ground level
-				PORTD.OUT = 0b00000111;	
+				PORTD.OUT |= 0b00000010;	
 			if (floor == 2) // Go to level 1
-				PORTD.OUT = 0b00000101;	
+				PORTD.OUT |= 0b00000100;	
 		}
 	}
+	
 	int y = PORTF.INTFLAGS; // Reset the switches
-	PORTF.INTFLAGS=y;
+	PORTF.INTFLAGS = y;
 }
