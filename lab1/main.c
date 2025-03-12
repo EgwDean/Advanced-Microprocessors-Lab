@@ -70,6 +70,6 @@ ISR(PORTF_PORT_vect) {
 		}
 	}
 	
-	int y = PORTF.INTFLAGS; // Reset the switches
+	int y = PORTF.INTFLAGS; // Reset the flags
 	PORTF.INTFLAGS = y;
 }
