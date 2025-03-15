@@ -15,8 +15,8 @@ int main() {
 	
 	// Initialize the traffic light
 	PORTD.DIR |= 0b00000111; //Pins 0 and 2 of port D are outputs
-	PORTD.OUT |= 0b00000011; // Red light for pedestrians (insert breakpoint)
-	PORTD.OUT &= 0b11111011; // Green light for cars (insert breakpoint)
+	PORTD.OUT |= 0b00000011; // Red light for pedestrians 
+	PORTD.OUT &= 0b11111011; // Green light for cars 
 	
 	// Initialize the counter
 	TCA0.SPLIT.CTRLD = 1; // Enable split mode
