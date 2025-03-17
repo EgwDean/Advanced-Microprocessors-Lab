@@ -20,8 +20,8 @@ int main() {
 	
 	// Initialize the counter
 	TCA0.SPLIT.CTRLD = 1; // Enable split mode
-	TCA0.SPLIT.LCNT = 0; // Clear counter low
-	TCA0.SPLIT.HCNT = 0; // Clear counter high
+	TCA0.SPLIT.LCNT = 0b11111111; // Clear counter low
+	TCA0.SPLIT.HCNT = 0b11111111; // Clear counter high
 	TCA0.SPLIT.CTRLA = 0x7<<1 | 1; // Prescaler value = 1024 and the peripheral is disabled
 	TCA0.SPLIT.INTCTRL |= 0b00010010; // Interrupt Enable for channel 0
 	
@@ -36,17 +36,16 @@ int main() {
 			
 			x = 0; // Break out of the conditional block after this iteration 
 			TCA0.SPLIT.LCNT = 0; // Clear counter
-			TCA0.SPLIT.LCMP0 = value3; // Pedestrian can use the button after the counter counts up to value3
+			TCA0.SPLIT.LCMP0 = value3; // Pedestrian can use the button after the counter counts p to value3 (insert breakpoint)
 			int_type = 2; // Button time interrupt
-			TCA0.SPLIT.CTRLA |= 1; // Counter starts to count (insert breakpoint)
+
 		}
 		
 		if (x == 2){
 			
 			x = 0;
 			TCA0.SPLIT.LCNT = 0; // Clear counter
-			TCA0.SPLIT.LCMP0 = value2;
-			TCA0.SPLIT.CTRLA |= 1; // Counter starts to count (insert breakpoint)
+			TCA0.SPLIT.LCMP0 = value2; // (insert breakpoint)
 			int_type = 3;
 		}
 		
@@ -64,10 +63,11 @@ ISR(PORTF_PORT_vect) { // Is triggered after the press of the button
 		PORTD.OUT |= 0b00000100; // Red light for cars 
 		PORTD.OUT &= 0b11111110; // Green light for pedestrians 
 		int_type = 1; // traffic light interrupt
-		
-		TCA0.SPLIT.LCMP0 = value2;
-		TCA0.SPLIT.CTRLA |= 1; // Counter starts to count (insert breakpoint)
+
+		TCA0.SPLIT.LCNT = 0; // Clear counter		
+		TCA0.SPLIT.LCMP0 = value2; // (insert breakpoint)
 	}
+	
 	PORTF.INTFLAGS = PIN5_bm; // Clear the interrupt flag
 }
 
@@ -82,15 +82,14 @@ ISR(TCA0_LCMP0_vect) {
 	
 	if (int_type == 2) {
 		
-		allow_button = 1; // Allow the press of the button 
-		int_type = 0; // None of the counter interrupts should happen
-		TCA0.SPLIT.LCNT = 0; // Clear the counter (insert breakpoint)
+		allow_button = 1; // Allow the press of the button (insert breakpoint)
+		int_type = 0; // None of the counter interrupts should happen 
+
 	}
 	
 	if (int_type == 3) {
 		
 		int_type = 0; // None of the counter interrupts should happen
-		TCA0.SPLIT.LCNT = 0; // Clear the counter
 		PORTD.OUT &= 0b11111011;
 		PORTD.OUT |= 0b00000011;
 		x = 1; // (insert breakpoint)
@@ -100,20 +99,13 @@ ISR(TCA0_LCMP0_vect) {
 }
 
 ISR(TCA0_HUNF_vect) {
-	
-	if (z == 0) {
-		z = 1;
-		
-	} else {
-		
+			
 		PORTD.OUT |= 0b00000100; // Red light for CARS 
 		PORTD.OUT &= 0b11111100; // Green light for pedestrians and tram 
 	
 		allow_button = 0; // Allow the press of the button 
 	
 		x = 2; //(insert breakpoint)
-	}
 	
-	TCA0.SPLIT.INTFLAGS = TCA_SPLIT_HUNF_bm; // Clear the interrupt flag
-	
+		TCA0.SPLIT.INTFLAGS = TCA_SPLIT_HUNF_bm; // Clear the interrupt flag	
 }
