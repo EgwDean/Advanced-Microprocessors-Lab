@@ -3,8 +3,8 @@
 
 
 #define value1 200
-#define value2 225 // After the press of the button, the counter counts to value2 and changes the state of the traffic light
-#define value3 200 // The pedestrian cannot press the button until the counter counts up to this value
+#define value2 30 // After the press of the button, the counter counts to value2 and changes the state of the traffic light
+#define value3 55 // The pedestrian cannot press the button until the counter counts up to this value
 
 int allow_button = 1; // Pedestrians are allowed to press the button
 int int_type; // Indicates which type of interrupt is allowed
@@ -35,8 +35,8 @@ int main() {
 		if (x == 1) {
 			
 			x = 0; // Break out of the conditional block after this iteration 
-			TCA0.SPLIT.LCNT = 0; // Clear counter
-			TCA0.SPLIT.LCMP0 = value3; // Pedestrian can use the button after the counter counts p to value3 (insert breakpoint)
+			TCA0.SPLIT.LCNT = value3; // Clear counter
+			TCA0.SPLIT.LCMP0 = 0; // Pedestrian can use the button after the counter counts p to value3 (insert breakpoint)
 			int_type = 2; // Button time interrupt
 
 		}
@@ -45,8 +45,8 @@ int main() {
 			
 			x = 0;
 			TCA0.SPLIT.HCNT = value1;
-			TCA0.SPLIT.LCNT = 0; // Clear counter
-			TCA0.SPLIT.LCMP0 = value2; // (insert breakpoint)
+			TCA0.SPLIT.LCNT = value2; // Clear counter
+			TCA0.SPLIT.LCMP0 = 0; // (insert breakpoint)
 			int_type = 3;
 		}
 		
@@ -65,8 +65,8 @@ ISR(PORTF_PORT_vect) { // Is triggered after the press of the button
 		PORTD.OUT &= 0b11111110; // Green light for pedestrians 
 		int_type = 1; // traffic light interrupt
 
-		TCA0.SPLIT.LCNT = 0; // Clear counter		
-		TCA0.SPLIT.LCMP0 = value2; // (insert breakpoint)
+		TCA0.SPLIT.LCNT = value2; // Clear counter		
+		TCA0.SPLIT.LCMP0 = 0; // (insert breakpoint)
 	}
 	
 	PORTF.INTFLAGS = PIN5_bm; // Clear the interrupt flag
