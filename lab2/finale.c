@@ -2,7 +2,7 @@
 #include <avr/interrupt.h>
 
 
-// value0 255
+#define value1 200
 #define value2 225 // After the press of the button, the counter counts to value2 and changes the state of the traffic light
 #define value3 200 // The pedestrian cannot press the button until the counter counts up to this value
 
@@ -20,8 +20,8 @@ int main() {
 	
 	// Initialize the counter
 	TCA0.SPLIT.CTRLD = 1; // Enable split mode
-	TCA0.SPLIT.LCNT = 0b11111111; // Clear counter low
-	TCA0.SPLIT.HCNT = 0b11111111; // Clear counter high
+	TCA0.SPLIT.LCNT = 0; // Clear counter low (FF because they count from FF to zero)
+	TCA0.SPLIT.HCNT = value1; // Start from value1 until you reach zero
 	TCA0.SPLIT.CTRLA = 0x7<<1 | 1; // Prescaler value = 1024 and the peripheral is disabled
 	TCA0.SPLIT.INTCTRL |= 0b00010010; // Interrupt Enable for channel 0
 	
@@ -44,6 +44,7 @@ int main() {
 		if (x == 2){
 			
 			x = 0;
+			TCA0.SPLIT.HCNT = value1;
 			TCA0.SPLIT.LCNT = 0; // Clear counter
 			TCA0.SPLIT.LCMP0 = value2; // (insert breakpoint)
 			int_type = 3;
@@ -74,6 +75,7 @@ ISR(PORTF_PORT_vect) { // Is triggered after the press of the button
 ISR(TCA0_LCMP0_vect) {
 	
 	if (int_type == 1) { // traffic light changes state
+		
 		
 		PORTD.OUT |= 0b00000001; // Red light for pedestrians
 		PORTD.OUT &= 0b11111011; // Green light for cars 
