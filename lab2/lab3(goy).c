@@ -25,8 +25,7 @@ int main() {
 	PORTD.OUT &= 0b11111011; // Green light for cars
 	
 	// Initialize the counter
-	TCA0.SPLIT.CTRLD = 1; // Enable split mode
-	//TCA0.SPLIT.LCNT = 0; // Clear counter low 
+	TCA0.SPLIT.CTRLD = 1; // Enable split mode 
 	TCA0.SPLIT.HCNT = value1; // Start from value1 until you reach zero
 	TCA0.SPLIT.CTRLA = 0x7<<1 | 1; // Prescaler value = 1024 and the peripheral is enabled
 	TCA0.SPLIT.INTCTRL |= 0b00010010; // Compare interrupt enable (low) and underflow interrupt enable (high)
@@ -38,7 +37,7 @@ int main() {
 	
 	while (1) { // Main loop
 		
-		if (x == 1) {
+		if (x == 1) { // This block runs after the press of the button
 			
 			x = 0; // Break out of the conditional block after this iteration
 			TCA0.SPLIT.LCNT = value3; // Initialize counter to value3
@@ -78,7 +77,7 @@ ISR(PORTF_PORT_vect) { // Is triggered after the press of the button
 	PORTF.INTFLAGS = PIN5_bm; // Clear the interrupt flag
 }
 
-ISR(TCA0_LCMP0_vect) {
+ISR(TCA0_LCMP0_vect) { // Runs after the low counter counts to zero
 	
 	if (int_type == 1) { // traffic light changes state
 		
