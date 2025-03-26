@@ -74,7 +74,8 @@ ISR(PORTF_PORT_vect) { // Is triggered after the press of the button
 		TCA0.SPLIT.LCMP0 = 0; // (insert breakpoint)
 	}
 	
-	PORTF.INTFLAGS = PIN5_bm; // Clear the interrupt flag
+	int y = PORTF.INTFLAGS;
+	PORTF.INTFLAGS = y; // Clear the interrupt flag
 }
 
 ISR(TCA0_LCMP0_vect) { // Runs after the low counter counts to zero
@@ -101,7 +102,8 @@ ISR(TCA0_LCMP0_vect) { // Runs after the low counter counts to zero
 		x = 1; // (insert breakpoint)
 	}
 	
-	TCA0.SPLIT.INTFLAGS = TCA_SPLIT_LCMP0_bm; // Clear the interrupt flag
+	int y = TCA0.SPLIT.INTFLAGS;
+	TCA0.SPLIT.INTFLAGS = y; // Clear the interrupt flag
 }
 
 ISR(TCA0_HUNF_vect) {  // Tram interrupt
@@ -113,5 +115,6 @@ ISR(TCA0_HUNF_vect) {  // Tram interrupt
 	
 	x = 2; // (insert breakpoint)
 	
-	TCA0.SPLIT.INTFLAGS = TCA_SPLIT_HUNF_bm; // Clear the interrupt flag
+		int y = TCA0.SPLIT.INTFLAGS;
+		TCA0.SPLIT.INTFLAGS = y; // Clear the interrupt flag
 }
