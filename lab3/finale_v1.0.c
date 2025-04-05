@@ -7,7 +7,6 @@
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
-#include <adc.h>
 
 //counter thresholds
 #define value1 20
@@ -15,7 +14,8 @@
 #define value3 60
 
 //distance sensor threshold
-#define DISTANCE 8
+#define DISTANCE_1 8
+#define DISTANCE_2 9
 
 int x; //loop control flag
 int z; //ADC ISR control flag
@@ -36,15 +36,15 @@ int main() {
 	ADC0.MUXPOS |= ADC_MUXPOS_AIN7_gc; //bit 7 analog input
 	ADC0.DBGCTRL |= ADC_DBGRUN_bm; //enable Debug Mode
 	ADC0.CTRLA |= ADC_FREERUN_bm; //free-running mode enabled
-	ADC0.WINLT |= DISTANCE; //set threshold for forward sensor
-	ADC0.WINHT |= DISTANCE; //set threshold for side sensor
+	ADC0.WINLT |= DISTANCE_1; //set threshold for forward sensor
+	ADC0.WINHT |= DISTANCE_2; //set threshold for side sensor
 	ADC0.INTCTRL |= ADC_WCMP_bm; //enable interrupts for WCM
 	ADC0.CTRLE = ADC_WINCM_ABOVE_gc; //interrupt when RESULT > WINLT	
 	
 	//counter setup
 	TCA0.SINGLE.CNT = 0; //clear counter
 	TCA0.SINGLE.CTRLB = TCA_SINGLE_WGMODE_NORMAL_gc; //normal mode
-	TCA0.SINGLE.CTRLA = TCA_SINGLE_CLKSEL_DIV1024_gc | TCA_SINGLE_ENABLE_bm //prescaler value 1024 and counter enable
+	TCA0.SINGLE.CTRLA = TCA_SINGLE_CLKSEL_DIV1024_gc | TCA_SINGLE_ENABLE_bm; //prescaler value 1024 and counter enable
 	TCA0.SINGLE.INTCTRL = TCA_SINGLE_CMP0_bm; //enable compare channel 0 interrupt
 	ADC0.COMMAND |= ADC_STCONV_bm; //start conversion	
 	
@@ -96,14 +96,14 @@ ISR(ADC0_WCOMP_vect) { //ADC interrupt service routine
 		PORTD.OUT &= ~PIN0_bm; //turn on led 0
 		right = right + 1; //CHANGE VALUE (insert breakpoint)
 		PORTD.OUT |= PIN0_bm; //turn off led 0
-		PORTD.OUT &= ~PIN1_bm //turn on led 1
+		PORTD.OUT &= ~PIN1_bm; //turn on led 1
 	}
 	
 	if (z == 2 && inverted == 0) { //turn left
 		
 		PORTD.OUT |= PIN1_bm; //turn off led 1
 		PORTD.OUT &= ~PIN2_bm; //turn on led 2
-		left = left + 1 //CHANGE VALUE (insert breakpoint)
+		left = left + 1; //CHANGE VALUE (insert breakpoint)
 		PORTD.OUT |= PIN2_bm; //turn off led 2
 		PORTD.OUT &= ~PIN1_bm; //turn on led 1
 	}
