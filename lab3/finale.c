@@ -23,7 +23,8 @@ int main(){
 	
 	//Led setup
 	PORTD.DIR = 0b00000111; 
-	PORTD.OUT |= 0b00000111;
+	PORTD.OUT |= 0b00000101;
+	PORTD.OUT &= 0b11111101;
 	
 	//initialize the ADC 
 	ADC0.CTRLA |= ADC_RESSEL_10BIT_gc; //10-bit resolution
@@ -31,6 +32,7 @@ int main(){
 	
 	ADC0.MUXPOS |= ADC_MUXPOS_AIN7_gc; //The bit
 	ADC0.DBGCTRL |= ADC_DBGRUN_bm; //Enable Debug Mode
+	ADC0.CTRLA |= ADC_FREERUN_bm; //Free-Running mode enabled
 	//Window Comparator Mode
 	
 	ADC0.WINLT |= 8; //Set threshold for forward
@@ -61,31 +63,27 @@ int main(){
 		
 		
 		if (x == 1){ //side sensor
+					
 				
-	
-				ADC0.CTRLA = 0b00000011; //Free-Running mode disabled
+				//ADC0.CTRLA ^= (1 << 1);//Free-Running mode disabled
 				TCA0.SINGLE.CNT = 0; //clear counter
 				TCA0.SINGLE.CMP0 = value1;
 				z = 1;
 				x = 0;
-				ADC0.CTRLE = 0b00000010; //Interrupt when RESULT > WINLT		(insert breakpoint)
+				ADC0.CTRLE = 0b00000010; //Interrupt when RESULT > WINHT		(insert breakpoint)
 					
 		}
 		
 		if (x == 2){ //forward sensor
 				
-
-
-				PORTD.OUT &= 0b11111101;
-			
+		
 				ADC0.CTRLA |= ADC_FREERUN_bm; //Free-Running mode enabled
 				TCA0.SINGLE.CNT = 0; //clear counter
 				TCA0.SINGLE.CMP0 = value2;
 				z = 2;
 				x = 0;
 				ADC0.CTRLE = 0b00000001; //Interrupt when RESULT < WINLT (insert breakpoint)
-				
-								
+												
 		}
 		
 		if ( (left == (right + 4)) || (right == (left + 4)))
@@ -103,10 +101,13 @@ ISR(ADC0_WCOMP_vect){
 	
 	if (z == 1 && inverted == 0){ //right
 		
-
+		PORTD.OUT |= 0b00000010;
 		PORTD.OUT &= 0b11111110;
+		
 		right = right + 1; // CHANGE VALUE IDIOT (insert breakpoint)
+		
 		PORTD.OUT |= 0b00000001;
+		PORTD.OUT &= 0b11111101;
 
 	}
 	
@@ -117,16 +118,20 @@ ISR(ADC0_WCOMP_vect){
 		
 		left = left + 1;	// CHANGE VALUE IDIOT (insert breakpoint)
 		
-		PORTD.OUT &= 0b11111101;
 		PORTD.OUT |= 0b00000100;
+		PORTD.OUT &= 0b11111101;
+		
 	}
 	
 	if ((inverted == 1) && (z == 1)) { //inverted left
 		
+		PORTD.OUT |= 0b00000010;		
 		PORTD.OUT &= 0b11111011;
+		
 		right = right - 1;	// CHANGE VALUE IDIOT (insert breakpoint)
+		
 		PORTD.OUT |= 0b00000100;
-
+		PORTD.OUT &= 0b11111101;
 		
 	}
 		
@@ -156,14 +161,13 @@ ISR(TCA0_CMP0_vect){
 		
 	if (z == 2){
 		x = 1;
-		PORTD.OUT |= 0b00000010;
 		ADC0.CTRLE = 0b00000000; // disable int	(insert breakpoint)	
 	}
 		
 	if (inverted == 2) {
 		
 		inverted = 1;
-		PORTD.OUT |= 0b00000111;
+		PORTD.OUT |= 0b00000101;
 		x = 1;
 	}
 	
