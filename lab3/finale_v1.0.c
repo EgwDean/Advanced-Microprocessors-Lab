@@ -60,7 +60,7 @@ int main() {
 		
 		if (x == 1) { //side sensor
 				
-				//ADC0.CTRLA ^= (1 << 1);//Free-Running mode disabled ?
+				ADC0.CTRLA &= ~ADC_FREERUN_bm; // Disable free run, enable single
 				TCA0.SINGLE.CNT = 0; //clear counter
 				TCA0.SINGLE.CMP0 = value1; //assign value1 to the counter compare
 				z = 1; //side sensor part of the ISR should run
@@ -71,6 +71,7 @@ int main() {
 		if (x == 2) { //forward sensor
 			
 				ADC0.CTRLA |= ADC_FREERUN_bm; //Free-Running mode enabled
+				ADC0.COMMAND |= ADC_STCONV_bm; //start conversion	
 				TCA0.SINGLE.CNT = 0; //clear counter
 				TCA0.SINGLE.CMP0 = value2; //assign value1 to the counter compare
 				z = 2; //forward sensor part of the ISR should run
@@ -86,6 +87,8 @@ int main() {
 			
 		PORTD.OUT |= 0b00000000; // NOP (insert breakpoint)
 	}
+		
+	ADC0.CTRLA = 0; // disable ADC0
 }
 
 ISR(ADC0_WCOMP_vect) { //ADC interrupt service routine
