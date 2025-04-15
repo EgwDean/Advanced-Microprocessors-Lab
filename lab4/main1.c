@@ -29,7 +29,7 @@ int main(){
 	
 	PORTF.PIN6CTRL |= PORT_PULLUPEN_bm | PORT_ISC_BOTHEDGES_gc;
 	
-    TCA0.SPLIT.INTCTRL = TCA_SPLIT_LUNF_bm |  TCA_SPLIT_HUNF_bm;
+    	TCA0.SPLIT.INTCTRL = TCA_SPLIT_LUNF_bm |  TCA_SPLIT_HUNF_bm;
 	
 	//TCA0.SPLIT.CTRLA |= TCA_SPLIT_ENABLE_bm; //Enable TCA
 		
@@ -80,12 +80,9 @@ int main(){
 		TCA0.SPLIT.CTRLA &= ~TCA_SPLIT_ENABLE_bm; //Disable TCA		
 		
 	}
-		
-		
+				
 	PORTD.OUT |= 0b00000000; 
-	
-	
-	
+		
 	}
 }
 
