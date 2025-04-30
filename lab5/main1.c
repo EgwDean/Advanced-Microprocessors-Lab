@@ -32,10 +32,6 @@ int main(){
 	ADC0.COMMAND |= ADC_STCONV_bm; //Start Conversion
 	
 	
-	PORTF.PIN5CTRL |= PORT_PULLUPEN_bm | PORT_ISC_BOTHEDGES_gc;
-	PORTF.PIN6CTRL |= PORT_PULLUPEN_bm | PORT_ISC_BOTHEDGES_gc;
-	
-	
 	sei();	
 	
 	while(1){
@@ -63,18 +59,4 @@ ISR(ADC0_WCOMP_vect){
 	int intflags = ADC0.INTFLAGS;
 	ADC0.INTFLAGS = intflags;
 	
-}
-
-
-ISR(PORTF_PORT_vect){
-	
-	ADC0.CTRLA &= 0b11111110; //disable ADC		
-	
-	
-	uint8_t go_up = PORTF.INTFLAGS & PIN5_bm; // Equals PIN5_bm if pin 5 is pressed, else it's all 0s
-	uint8_t go_down = PORTF.INTFLAGS & PIN6_bm; //
-	
-	int y = PORTF.INTFLAGS; //Procedure to
-	PORTF.INTFLAGS=y; //clear the interrupt flag
-	x=1; //change logic flag to get out of loop
 }
