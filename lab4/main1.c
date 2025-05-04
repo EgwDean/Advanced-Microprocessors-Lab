@@ -2,7 +2,7 @@
  * lab4.c
  *
  * Created: 09/04/2025 18:06:38
- * Author : Giannis
+ * Author : Theo
  */ 
 
 
