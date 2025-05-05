@@ -5,8 +5,6 @@
  * Author : Theo
  */ 
 
-
-
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
@@ -86,7 +84,7 @@ ISR(TCA0_LUNF_vect) { // Every 1 ms, wings
 	PORTD.OUT ^= PIN0_bm; // Complement the wings led
 	
 	int intflags = TCA0.SINGLE.INTFLAGS; // Clear the flags
-	TCA0.SINGLE.INTFLAGS = intflags; // breakpoint
+	TCA0.SINGLE.INTFLAGS = intflags; // (breakpoint)
 
 }
 
