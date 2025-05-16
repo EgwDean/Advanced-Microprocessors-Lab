@@ -18,7 +18,7 @@ int humidity;
 int main(){
 	
 	
-	PORTD.DIR |= PIN1_bm; //PIN is output
+	PORTD.DIR |= PIN1_bm | PIN2_bm | PIN3_bm; //PIN is output
 	PORTD.OUT |= 0b00000111;
 	
 		//initialize the ADC for Free-Running mode
