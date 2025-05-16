@@ -80,7 +80,7 @@ int main(){
 			TCA0.SINGLE.INTCTRL |= TCA_SINGLE_CMP0_bm;
 			TCA0.SINGLE.CTRLA |= TCA_SINGLE_ENABLE_bm;
 			
-			TCA0.SINGLE.CMP0 = 10; //select the duty cycle
+			TCA0.SINGLE.CMP0 = 10; //select the duty cycle vreakpoin
 			TCA0.SINGLE.PER = 0.5 * TCA0.SINGLE.CMP0; // BREAKPOINT
 			
 		}
@@ -170,6 +170,8 @@ ISR(TCA0_CMP0_vect){
 }
 
 ISR(TCA0_OVF_vect){
+	
+	PORTD.OUT ^= PIN2_bm;
 	p = p + 1; // BREAKPOINT
 	
 	if (p == 4) {
