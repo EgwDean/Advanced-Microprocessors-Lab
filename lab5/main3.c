@@ -33,8 +33,6 @@ int main(){
 	ADC0.WINHT |= 64;	
 	
 	ADC0.INTCTRL |= ADC_WCMP_bm; //Enable Interrupts for WCM
-	ADC0.COMMAND |= ADC_STCONV_bm; //Start Conversion
-	
 	
 	PORTF.PIN5CTRL |= PORT_PULLUPEN_bm | PORT_ISC_BOTHEDGES_gc;
 	PORTF.PIN6CTRL |= PORT_PULLUPEN_bm | PORT_ISC_BOTHEDGES_gc;
